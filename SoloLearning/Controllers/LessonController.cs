@@ -38,6 +38,7 @@ namespace SoloLearning.Controllers
             return lesson;
         }
 
+
         // PUT: api/Lessons/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -98,7 +99,31 @@ namespace SoloLearning.Controllers
             return CreatedAtAction("GetLesson", new { id = lesson.Id }, lesson);
         }
 
-      
+
+        [HttpPost("AddSlides")]
+        public async Task<ActionResult<Lesson>> PostSlides([FromBody] List<Slide> Slides)
+        {
+
+            if (Slides != null)
+            {
+                    
+
+               Slides.ForEach(slide =>
+                {
+                    _context.Slides.Add(slide);
+
+                    foreach (var q in slide.Questions)
+                    {
+                        _context.Question.Add(q);
+                    }
+                });
+            }
+
+
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GelSlides",  Slides);
+        }
         // DELETE: api/Lessons/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLesson(int id)

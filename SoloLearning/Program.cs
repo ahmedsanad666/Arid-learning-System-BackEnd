@@ -13,7 +13,15 @@ options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     )) ;
 
+var myAllowOrigins = "_myAllowOrigins";
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowOrigins, policy =>
+    {
+        policy.WithOrigins("http://localhost:8080").AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 
 
@@ -39,5 +47,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.UseCors(myAllowOrigins);
 app.Run();

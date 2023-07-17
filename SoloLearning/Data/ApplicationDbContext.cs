@@ -16,6 +16,7 @@ namespace SoloLearning.Data
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Slide> Slides { get; set; }
         public DbSet<Question> Question { get; set; }
+        public DbSet<UserCourse> UserCourses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
