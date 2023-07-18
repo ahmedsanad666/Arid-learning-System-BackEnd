@@ -51,7 +51,7 @@ public class Question
         get { return string.Join(",", Choices); }
         set { Choices = value.Split(',').ToList(); }
     }
-    public string Answer { get; set; }
+    public int Answer { get; set; }
     public int Point { get; set; }
     //fk
     public string SlideId { get; set; }

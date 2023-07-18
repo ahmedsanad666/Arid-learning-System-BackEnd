@@ -21,7 +21,19 @@ namespace SoloLearning.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Lesson>>> GetLessons()
         {
-            return await _context.Lessons.ToListAsync();
+              List<Lesson> LessonData = await _context.Lessons.ToListAsync();
+            List<Slide> Slides = await _context.Slides.ToListAsync();
+            List<Question> questions = await _context.Question.ToListAsync();
+
+
+            var combinedData = new
+            {
+              LessonData,
+             Slides,
+               questions
+            };
+
+            return Ok(combinedData);
         }
 
         // GET: api/Lessons/5
