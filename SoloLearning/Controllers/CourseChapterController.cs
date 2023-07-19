@@ -20,7 +20,8 @@ namespace SoloLearning.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseChapter>>> GetCourseChapters()
         {
-            return await _context.CourseChapters.ToListAsync();
+                var chapters= await _context.CourseChapters.Include(e => e.Course).ToListAsync();
+            return chapters;    
         }
 
         // GET: api/CourseCourseChapters/5

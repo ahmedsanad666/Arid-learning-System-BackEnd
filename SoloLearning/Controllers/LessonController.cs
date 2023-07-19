@@ -21,7 +21,7 @@ namespace SoloLearning.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Lesson>>> GetLessons()
         {
-              List<Lesson> LessonData = await _context.Lessons.ToListAsync();
+            List<Lesson> LessonData = await _context.Lessons.Include(e=> e.CourseChapter).ToListAsync();
             List<Slide> Slides = await _context.Slides.ToListAsync();
             List<Question> questions = await _context.Question.ToListAsync();
 
@@ -87,7 +87,6 @@ namespace SoloLearning.Controllers
         [HttpPost]
         public async Task<ActionResult<Lesson>> PostLesson([FromBody] Lesson lesson)
         {
-            _context.Lessons.Add(lesson);
 
             if ( lesson.Slides != null)
             {
@@ -104,6 +103,11 @@ namespace SoloLearning.Controllers
                 }
             });
             }
+            else
+            {   
+            _context.Lessons.Add(lesson);
+
+            }
 
             
             await _context.SaveChangesAsync();
@@ -113,7 +117,7 @@ namespace SoloLearning.Controllers
 
 
         [HttpPost("AddSlides")]
-        public async Task<ActionResult<Lesson>> PostSlides([FromBody] List<Slide> Slides)
+        public async Task<ActionResult<Slide>> PostSlides([FromBody] List<Slide> Slides)
         {
 
             if (Slides != null)
