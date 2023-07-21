@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoloLearning.Data;
 
@@ -11,9 +12,11 @@ using SoloLearning.Data;
 namespace SoloLearning.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230721105443_AddCommentModels")]
+    partial class AddCommentModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,30 +176,6 @@ namespace SoloLearning.Migrations
                     b.ToTable("Slides");
                 });
 
-            modelBuilder.Entity("SoloLearning.Models.SlideComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SlideId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SlideId");
-
-                    b.ToTable("slideComments");
-                });
-
             modelBuilder.Entity("SoloLearning.Models.UserCourse", b =>
                 {
                     b.Property<int>("Id")
@@ -267,17 +246,6 @@ namespace SoloLearning.Migrations
                         .IsRequired();
 
                     b.Navigation("Lesson");
-                });
-
-            modelBuilder.Entity("SoloLearning.Models.SlideComment", b =>
-                {
-                    b.HasOne("SoloLearning.Models.Slide", "Slide")
-                        .WithMany()
-                        .HasForeignKey("SlideId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Slide");
                 });
 
             modelBuilder.Entity("SoloLearning.Models.UserCourse", b =>

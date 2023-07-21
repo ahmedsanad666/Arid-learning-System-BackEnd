@@ -57,3 +57,15 @@ public class Question
     public string SlideId { get; set; }
     //public Slide Slide { get; set; }
 }
+
+public class SlideComment
+{
+
+    public int Id { get; set; }
+    public string Comment { get; set; }
+    public string ApplicationUserId { get; set; }
+
+    //fk
+    public int SlideId { get; set; }
+    public Slide Slide { get; set; }
+}
