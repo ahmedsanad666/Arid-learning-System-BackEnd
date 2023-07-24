@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoloLearning.Data;
 
@@ -11,9 +12,11 @@ using SoloLearning.Data;
 namespace SoloLearning.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230724164522_updateTablessssts")]
+    partial class updateTablessssts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace SoloLearning.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9102da58-8427-472d-8f77-da96d08ab8f6",
+                            Id = "5ae8e61f-25f3-42aa-a3ad-8b381058bd6a",
                             Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            NormalizedName = "AMDIN"
                         },
                         new
                         {
-                            Id = "5ed528f3-bd0e-4b7a-b264-aa123cd64ce8",
+                            Id = "e02b63c0-77a0-4c3c-8a06-3be9e1a9c3ec",
                             Name = "User",
                             NormalizedName = "USER"
                         });

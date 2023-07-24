@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using SoloLearning.Data;
@@ -85,6 +86,7 @@ namespace SoloLearning.Controllers
         // POST: api/Lessons
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Lesson>> PostLesson([FromBody] Lesson lesson)
         {
 
@@ -117,6 +119,7 @@ namespace SoloLearning.Controllers
 
 
         [HttpPost("AddSlides")]
+        [Authorize]
         public async Task<ActionResult<Slide>> PostSlides([FromBody] List<Slide> Slides)
         {
 
@@ -142,6 +145,7 @@ namespace SoloLearning.Controllers
         }
         // DELETE: api/Lessons/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteLesson(int id)
         {
             var lesson = await _context.Lessons.FindAsync(id);

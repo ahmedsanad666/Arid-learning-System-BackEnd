@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoloLearning.Data;
 using SoloLearning.Migrations;
@@ -20,6 +21,7 @@ namespace SoloLearning.Controllers
 
             // GET: api/Lessons
             [HttpGet]
+        [Authorize]
             public async Task<ActionResult<IEnumerable<SlideComment>>> GetComments()
             {
                 List<SlideComment> allComments = await _context.slideComments.ToListAsync();
@@ -54,6 +56,7 @@ namespace SoloLearning.Controllers
             // PUT: api/Lessons/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
             [HttpPut("{id}")]
+        [Authorize]
             public async Task<IActionResult> PutComment(int id, SlideComment comment)
             {
                 if (id != comment.Id)
@@ -85,6 +88,7 @@ namespace SoloLearning.Controllers
             // POST: api/Lessons
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
             [HttpPost]
+        [Authorize]
             public async Task<ActionResult<SlideComment>> PostComment([FromBody] SlideComment  comment)
             {
 
@@ -101,6 +105,7 @@ namespace SoloLearning.Controllers
 
 
             [HttpDelete("{id}")]
+        [Authorize]
             public async Task<IActionResult> DeleteComment(int id)
             {
                 var comment = await _context.slideComments.FindAsync(id);

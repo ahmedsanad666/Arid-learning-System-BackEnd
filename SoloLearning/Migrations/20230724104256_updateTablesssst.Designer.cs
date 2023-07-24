@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SoloLearning.Data;
 
@@ -11,9 +12,11 @@ using SoloLearning.Data;
 namespace SoloLearning.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230724104256_updateTablesssst")]
+    partial class updateTablesssst
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace SoloLearning.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9102da58-8427-472d-8f77-da96d08ab8f6",
+                            Id = "55fb3e93-eda5-4f6a-a7b0-ae0926cf1f81",
                             Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            NormalizedName = "AMDIN"
                         },
                         new
                         {
-                            Id = "5ed528f3-bd0e-4b7a-b264-aa123cd64ce8",
+                            Id = "aa8f6943-7182-4791-828a-19d6ad8a5399",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -189,12 +192,11 @@ namespace SoloLearning.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -223,9 +225,6 @@ namespace SoloLearning.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
