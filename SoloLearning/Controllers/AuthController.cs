@@ -94,8 +94,8 @@ namespace SoloLearning.Controllers
                     issuer: _Configuration["JwtSettings:Issuer"],
                     audience: _Configuration["JwtSettings:Audience"],
                     claims : claims,
-                  //expires : DateTime.Now.AddMinutes(Convert.ToInt32( _Configuration["JwtSettings:DurationInMinutes"])
-                  // ),
+                  expires: DateTime.Now.AddMinutes(Convert.ToInt32(_Configuration["JwtSettings:DurationInMinutes"])
+                   ),
                   signingCredentials: credentials
 
                   );
