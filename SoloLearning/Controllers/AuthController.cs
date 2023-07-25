@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SoloLearning.Data;
 using SoloLearning.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,12 +16,13 @@ namespace SoloLearning.Controllers
     {
        private  readonly UserManager<ApiUser> _userManager;
         private readonly IConfiguration _Configuration;
-        public AuthController(UserManager<ApiUser> userManager, IConfiguration configuration)
+        private readonly ApplicationDbContext _context;
+        public AuthController(UserManager<ApiUser> userManager, IConfiguration configuration, ApplicationDbContext context)
         {
 
             _userManager = userManager;
            _Configuration = configuration;
-
+            _context   = context;
         }
 
 
@@ -31,13 +34,14 @@ namespace SoloLearning.Controllers
         public async Task<ActionResult> Register([FromBody] ApiUser apiUser)
         {
             var user = new ApiUser
-            {
+            {   
               
                 Email = apiUser.Email,
                 UserName = apiUser.UserName,
                 FirstName = apiUser.FirstName,
                 LastName = apiUser.LastName,
                 Password = apiUser.Password,
+                Role = apiUser.Role,
                 // Add any other properties needed for ApplicationUser
             };
 
@@ -69,7 +73,7 @@ namespace SoloLearning.Controllers
           
                 var user = await _userManager.FindByEmailAsync(apiUser.Email);
                 var ValidPassword = await _userManager.CheckPasswordAsync(user, apiUser.Password);
-
+                     var userId = user.Id;
 
             if (ValidPassword)
             {
@@ -77,7 +81,7 @@ namespace SoloLearning.Controllers
 
 
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["JwtSettings:Key"]));
-
+             
                 var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
                 var roles = await _userManager.GetRolesAsync(apiUser);
                 var roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x)).ToList();
@@ -87,7 +91,7 @@ namespace SoloLearning.Controllers
                     new Claim(JwtRegisteredClaimNames.Sub , apiUser.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email,apiUser.Email),
-                    new Claim("uid", apiUser.Id)
+                    new Claim("uid",userId)
                 }.Union(userClaims).Union(roleClaims);
 
                 var token = new JwtSecurityToken(
@@ -116,7 +120,7 @@ namespace SoloLearning.Controllers
                 var userToken =  new JwtSecurityTokenHandler().WriteToken(token);
              var  AuthResponse = new  {
                  Token = userToken,
-                UserId = apiUser.Id,
+                UserId = userId,
                  Role = UseRole
              };
 
@@ -134,8 +138,19 @@ namespace SoloLearning.Controllers
            
         }
 
+        [HttpGet]
+        [Route("getallusers")]
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetAllUsers()
+        {
+            var users =  _userManager.Users.Select(u => new AppUser
+            {
+                Id = u.Id,
+                userName = u.UserName,
+                Role = u.Role,
+            }).ToList();
 
-
+            return Ok(users);
+        }
 
 
 

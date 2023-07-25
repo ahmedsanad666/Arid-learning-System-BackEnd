@@ -42,7 +42,6 @@ namespace SoloLearning.Controllers
         // PUT: api/Courses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutCourse(int id, Course course)
         {
             if (id != course.Id)
@@ -69,12 +68,11 @@ namespace SoloLearning.Controllers
             }
 
             return NoContent();
-        }
+        }   
 
         // POST: api/Courses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<Course>> PostCourse(Course course)
         {
             _context.Courses.Add(course);

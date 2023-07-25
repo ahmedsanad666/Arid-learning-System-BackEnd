@@ -20,6 +20,10 @@ options.UseSqlServer(
 
 var myAllowOrigins = "_myAllowOrigins";
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", b => b.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+//});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: myAllowOrigins, policy =>
@@ -69,11 +73,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors(myAllowOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.UseCors(myAllowOrigins);
+
 app.Run();
+    

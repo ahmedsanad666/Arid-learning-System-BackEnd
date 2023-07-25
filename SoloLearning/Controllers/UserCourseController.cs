@@ -19,10 +19,11 @@ namespace SoloLearning.Controllers
 
         // GET: api/Courses
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<UserCourse>>> GetUserCourses()
         {
-            return await _context.UserCourses.ToListAsync();
+
+           
+            return await _context.UserCourses.Include(w => w.ApiUser).ToListAsync();
         }
 
         // GET: api/Courses/5
@@ -42,7 +43,6 @@ namespace SoloLearning.Controllers
         // PUT: api/Courses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutUserCourse(int id, UserCourse  UserCourse)
         {
             if (id != UserCourse.Id)
@@ -74,7 +74,6 @@ namespace SoloLearning.Controllers
         // POST: api/Courses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<UserCourse>> PostUserCourse(UserCourse userCourse)
         {
             _context.UserCourses.Add(userCourse);
@@ -85,7 +84,6 @@ namespace SoloLearning.Controllers
 
         // DELETE: api/Courses/5
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteUserCourse(int id)
         {
             var course = await _context.UserCourses.FindAsync(id);

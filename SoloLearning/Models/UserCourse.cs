@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace SoloLearning.Models
 {
     public class UserCourse
     {
         public int Id { get; set; }
-        public string UserId { get; set; }
         public int CoursePoints { get; set; }
         public int UserPoints { get; set; }
         public DateTime StartedDate { get; set; } = DateTime.Now;
@@ -13,5 +13,8 @@ namespace SoloLearning.Models
         // FK
         public int CourseId { get; set; }
         public Course Course { get; set;}
+
+        public string ApiUserId { get; set; }
+        public ApiUser  ApiUser { get; set; }    
     }
 }

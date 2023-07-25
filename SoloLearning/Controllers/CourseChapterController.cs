@@ -42,7 +42,6 @@ namespace SoloLearning.Controllers
         // PUT: api/CourseCourseChapters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutCourseChapter(int id, CourseChapter courseChapter)
         {
             if (id != courseChapter.Id)
@@ -74,7 +73,6 @@ namespace SoloLearning.Controllers
         // POST: api/CourseCourseChapters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<CourseChapter>> PostCourseChapter(CourseChapter courseChapter)
         {
             _context.CourseChapters.Add(courseChapter);
