@@ -146,6 +146,10 @@ namespace SoloLearning.Controllers
             {
                 Id = u.Id,
                 userName = u.UserName,
+                firstName = u.FirstName,
+                lastName = u.LastName,
+                email = u.Email,
+                password= u.Password,
                 Role = u.Role,
             }).ToList();
 
@@ -157,6 +161,37 @@ namespace SoloLearning.Controllers
 
 
 
+        [HttpPost]
+        [Route("updateuser")]
+        public async Task<IActionResult> UpdateUser([FromBody] AppUser model)
+        {
+            // Find the user by their ID
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Update the user's properties
+            user.FirstName = model.firstName;
+            user.LastName = model.lastName;
+            user.Email = model.email;
+            user.Password = user.Password;
+            //user.Role = user.Role;
+            // Update other properties as needed
+
+            // Save the changes to the user
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Ok(); // Return success response
+            }
+            else
+            {
+                return BadRequest(result.Errors); // Return errors if the update failed
+            }
+        }
 
 
 
