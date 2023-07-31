@@ -48,15 +48,16 @@ namespace SoloLearning.Controllers
                 FirstName = apiUser.FirstName,
                 LastName = apiUser.LastName,
                 Password = apiUser.Password,
-                Role = isFirstUser ? "admin": "user",
+                Role = isFirstUser ? "Admin": "User",
                 // Add any other properties needed for ApplicationUser
             };
 
             var result = await _userManager.CreateAsync(user, apiUser.Password);
             if (result.Succeeded)
             {
-              
+
                 await _userManager.AddToRoleAsync(user, apiUser.Role);
+                //await _userManager.AddToRoleAsync(user, "Admin");
             }
 
           if(result.Errors.Any())
@@ -82,6 +83,7 @@ namespace SoloLearning.Controllers
                 var user = await _userManager.FindByEmailAsync(apiUser.Email);
                 var ValidPassword = await _userManager.CheckPasswordAsync(user, apiUser.Password);
                      var userId = user.Id;
+                        
 
             if (ValidPassword)
             {
@@ -111,10 +113,10 @@ namespace SoloLearning.Controllers
                   signingCredentials: credentials
 
                   );
-
-                var isAdmin = await _userManager.IsInRoleAsync(user, "admin");
+               
+                var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
                 int UseRole =0;
-                if (isAdmin)
+                if (user.Role == "Admin")
                 {
                     UseRole = 1;
                 }
