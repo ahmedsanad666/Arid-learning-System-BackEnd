@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SoloLearning.Data;
 using SoloLearning.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -17,8 +19,11 @@ namespace SoloLearning.Controllers
        private  readonly UserManager<ApiUser> _userManager;
         private readonly IConfiguration _Configuration;
         private readonly ApplicationDbContext _context;
-        public AuthController(UserManager<ApiUser> userManager, IConfiguration configuration, ApplicationDbContext context)
+        public static IWebHostEnvironment _webHostEnvironment;
+
+        public AuthController(UserManager<ApiUser> userManager, IConfiguration configuration, ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
+            _webHostEnvironment = webHostEnvironment;
 
             _userManager = userManager;
            _Configuration = configuration;
@@ -33,6 +38,8 @@ namespace SoloLearning.Controllers
         [Route("register")]
         public async Task<ActionResult> Register([FromBody] ApiUser apiUser)
         {
+            var users = await _userManager.Users.ToListAsync();
+            bool isFirstUser = users.Count == 0;
             var user = new ApiUser
             {   
               
@@ -41,13 +48,14 @@ namespace SoloLearning.Controllers
                 FirstName = apiUser.FirstName,
                 LastName = apiUser.LastName,
                 Password = apiUser.Password,
-                Role = apiUser.Role,
+                Role = isFirstUser ? "admin": "user",
                 // Add any other properties needed for ApplicationUser
             };
 
             var result = await _userManager.CreateAsync(user, apiUser.Password);
             if (result.Succeeded)
             {
+              
                 await _userManager.AddToRoleAsync(user, apiUser.Role);
             }
 
@@ -151,7 +159,16 @@ namespace SoloLearning.Controllers
                 email = u.Email,
                 password= u.Password,
                 Role = u.Role,
+               
             }).ToList();
+
+            foreach (var user in users)
+            {
+                string fileName = "imgs" + user.Id + ".png";
+                var path = Path.Combine(_webHostEnvironment.WebRootPath, "imgs", fileName);
+
+                user.ImgByte = System.IO.File.ReadAllBytes(path);
+            }
 
             return Ok(users);
         }
@@ -163,7 +180,7 @@ namespace SoloLearning.Controllers
 
         [HttpPost]
         [Route("updateuser")]
-        public async Task<IActionResult> UpdateUser([FromBody] AppUser model)
+        public async Task<IActionResult> UpdateUser([FromForm] AppUser model)
         {
             // Find the user by their ID
             var user = await _userManager.FindByIdAsync(model.Id);
@@ -172,20 +189,58 @@ namespace SoloLearning.Controllers
                 return NotFound();
             }
 
-            // Update the user's properties
+            string message = "";
+            var files = model.Files;
+            model.Files = null;
+
+            if (files != null && files.Length > 0)
+            {
+                string path = _webHostEnvironment.WebRootPath + "\\imgs\\";
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string fileName = "imgs" + model.Id + ".png";
+                if (System.IO.File.Exists(path + fileName))
+                {
+                    System.IO.File.Delete(path + fileName);
+                }
+                using (FileStream fileStream = System.IO.File.Create(path + fileName))
+                {
+                    files.CopyTo(fileStream);
+                    fileStream.Flush();
+                    message = "Success";
+
+                }
+
+
+            }
+            else 
+            {
+                message = "Failed";
+            }
+
             user.FirstName = model.firstName;
             user.LastName = model.lastName;
             user.Email = model.email;
             user.Password = user.Password;
-            //user.Role = user.Role;
-            // Update other properties as needed
-
-            // Save the changes to the user
+            
+        
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
             {
-                return Ok(); // Return success response
+                if (message == "Success")
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.InternalServerError, message);
+                }
+
+
             }
             else
             {

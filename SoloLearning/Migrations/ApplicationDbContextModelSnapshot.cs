@@ -51,13 +51,13 @@ namespace SoloLearning.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "63a7385b-04e9-4b93-80cb-5c8c5a7eb66d",
+                            Id = "6bf070b9-ba9f-426b-a935-7f899bfe2fcf",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "2e8c2ba6-7b72-457f-bb95-e8c0e7960b87",
+                            Id = "0159b20e-2b24-4e6e-9c1f-22766eae5c4f",
                             Name = "User",
                             NormalizedName = "USER"
                         });

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoloLearning.Models;
 
@@ -10,6 +11,10 @@ namespace SoloLearning.Models;
     public string Title { get; set; }
     [Required]
     public string Content { get; set; }
+    [NotMapped]
+    public IFormFile Files { get; set; }
+    [NotMapped]
+    public byte[] ImgByte { get; set; }
     public DateTime CreateDate { get; set; } = DateTime.Now;
 
     // fk

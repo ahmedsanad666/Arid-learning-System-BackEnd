@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SoloLearning.Data;
 using SoloLearning.Models;
+using System.Net;
 
 namespace SoloLearning.Controllers
 {
@@ -11,9 +12,10 @@ namespace SoloLearning.Controllers
         public class BlogController : ControllerBase
         {
             private readonly ApplicationDbContext _context;
-
-            public BlogController(ApplicationDbContext context)
+        public static IWebHostEnvironment _webHostEnvironment;
+            public BlogController(ApplicationDbContext context , IWebHostEnvironment webHostEnvironment)
             {
+            _webHostEnvironment = webHostEnvironment;
                 _context = context;
             }
 
@@ -22,8 +24,15 @@ namespace SoloLearning.Controllers
             public async Task<ActionResult<IEnumerable<Blog>>> AllBlogs()
             {
 
+            var all =  await _context.blogs.Include(w => w.ApiUser).ToListAsync();
+         foreach (var blog in all)
+            {
+                string fileName = "imgs" + blog.Id + ".png";
+                var path = Path.Combine(_webHostEnvironment.WebRootPath, "imgs", fileName);
 
-                return await _context.blogs.Include(w => w.ApiUser).ToListAsync();
+                blog.ImgByte = System.IO.File.ReadAllBytes(path);
+            }
+            return  all;
             }
 
             // GET: api/Courses/5
@@ -37,7 +46,12 @@ namespace SoloLearning.Controllers
                     return NotFound();
                 }
 
-                return Blog;
+            string fileName = "imgs" + Blog.Id + ".png";
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, "imgs",fileName);
+
+            Blog.ImgByte = System.IO.File.ReadAllBytes(path);
+
+            return Blog;
             }
 
             // PUT: api/Courses/5
@@ -74,12 +88,66 @@ namespace SoloLearning.Controllers
             // POST: api/Courses
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
             [HttpPost]
-            public async Task<ActionResult<Blog>> PostUserCourse(Blog Blog)
+            public async Task<ActionResult<Blog>> PostUserCourse([FromForm] Blog Blog)
             {
+
+            try
+            {
+
+                string message = "";
+                var files = Blog.Files;
+                Blog.Files = null;
+
                 _context.blogs.Add(Blog);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetBlog", new { id = Blog.Id }, Blog);
+                if(Blog.Id > 0 && files != null && files.Length > 0)
+                {
+                    string path = _webHostEnvironment.WebRootPath + "\\imgs\\";
+                  
+                    if(!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    string fileName = "imgs" + Blog.Id + ".png";
+                    if(System.IO.File.Exists(path + fileName))
+                    {
+                        System.IO.File.Delete(path + fileName);
+                    }
+                    using (FileStream fileStream = System.IO.File.Create(path + fileName)) 
+                    {
+                    files.CopyTo(fileStream);
+                        fileStream.Flush();
+                        message = "Success";
+
+                    }
+                        
+
+                }else if(Blog.Id == 0){
+                    message = "Failed";
+                }
+
+                else
+                {
+                    message = "Success";
+                }
+
+                if (message == "Success")
+                {
+                    return CreatedAtAction("GetBlog", new { id = Blog.Id }, Blog);
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.InternalServerError, message);
+                }
+              
+
+            }
+            catch(Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+               
             }
 
             // DELETE: api/Courses/5
