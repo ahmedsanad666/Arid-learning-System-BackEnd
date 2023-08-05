@@ -20,11 +20,12 @@ namespace SoloLearning.Controllers
         private readonly IConfiguration _Configuration;
         private readonly ApplicationDbContext _context;
         public static IWebHostEnvironment _webHostEnvironment;
+        public readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(UserManager<ApiUser> userManager, IConfiguration configuration, ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        public AuthController(UserManager<ApiUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _webHostEnvironment = webHostEnvironment;
-
+            _roleManager = roleManager;
             _userManager = userManager;
            _Configuration = configuration;
             _context   = context;
@@ -40,24 +41,32 @@ namespace SoloLearning.Controllers
         {
             var users = await _userManager.Users.ToListAsync();
             bool isFirstUser = users.Count == 0;
+            string roleName = isFirstUser ? "Admin" : "User";
             var user = new ApiUser
             {   
               
                 Email = apiUser.Email,
                 UserName = apiUser.UserName,
-                FirstName = apiUser.FirstName,
-                LastName = apiUser.LastName,
-                Password = apiUser.Password,
-                Role = isFirstUser ? "Admin": "User",
+             ArName = apiUser.ArName,
+             EnName=apiUser.EnName,
+                //Password = apiUser.Password,
+                //Role = isFirstUser ? "Admin": "User",
                 // Add any other properties needed for ApplicationUser
             };
+            IdentityRole role = await _roleManager.FindByNameAsync(roleName);
+            if (role == null)
+            {
+                role = new IdentityRole(roleName);
+                await _roleManager.CreateAsync(role);
+            }
 
             var result = await _userManager.CreateAsync(user, apiUser.Password);
             if (result.Succeeded)
             {
 
-                await _userManager.AddToRoleAsync(user, apiUser.Role);
+                //await _userManager.AddToRoleAsync(user, apiUser.Role);
                 //await _userManager.AddToRoleAsync(user, "Admin");
+                await _userManager.AddToRoleAsync(user, roleName);
             }
 
           if(result.Errors.Any())
@@ -114,9 +123,11 @@ namespace SoloLearning.Controllers
 
                   );
                
+             
                 var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
                 int UseRole =0;
-                if (user.Role == "Admin")
+                if (isAdmin)
                 {
                     UseRole = 1;
                 }
@@ -154,22 +165,45 @@ namespace SoloLearning.Controllers
         {
             var users =  _userManager.Users.Select(u => new AppUser
             {
+
                 Id = u.Id,
                 userName = u.UserName,
-                firstName = u.FirstName,
-                lastName = u.LastName,
+               ArName = u.ArName,
+               EnName = u.EnName,
                 email = u.Email,
-                password= u.Password,
-                Role = u.Role,
+                //password= u.Password,
+                
                
             }).ToList();
 
             foreach (var user in users)
             {
-                string fileName = "imgs" + user.Id + ".png";
-                var path = Path.Combine(_webHostEnvironment.WebRootPath, "imgs", fileName);
+              
+                    string fileName = "imgs" + user.Id + ".png";
 
-                user.ImgByte = System.IO.File.ReadAllBytes(path);
+                try
+                {
+                    var path = Path.Combine(_webHostEnvironment.WebRootPath, "imgs", fileName);
+
+                    user.ImgByte = System.IO.File.ReadAllBytes(path);
+                }
+                catch (Exception ex) {
+
+                    user.ImgByte = null;
+                }
+
+                 
+
+                   
+
+
+           
+                
+
+
+
+
+
             }
 
             return Ok(users);
@@ -223,10 +257,10 @@ namespace SoloLearning.Controllers
                 message = "Failed";
             }
 
-            user.FirstName = model.firstName;
-            user.LastName = model.lastName;
+          user.EnName = model.EnName;
+            user.ArName = model.ArName;
             user.Email = model.email;
-            user.Password = user.Password;
+            //user.Password = user.Password;
             
         
             var result = await _userManager.UpdateAsync(user);

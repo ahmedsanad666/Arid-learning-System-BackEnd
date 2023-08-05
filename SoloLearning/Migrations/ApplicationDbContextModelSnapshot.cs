@@ -51,13 +51,13 @@ namespace SoloLearning.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6bf070b9-ba9f-426b-a935-7f899bfe2fcf",
+                            Id = "8ae60217-9bc7-4fa9-aa20-4c18b079ea78",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "0159b20e-2b24-4e6e-9c1f-22766eae5c4f",
+                            Id = "3c2c2c38-17b5-4dea-b0e4-541bf8f0455b",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -177,6 +177,9 @@ namespace SoloLearning.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("ArName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -188,13 +191,7 @@ namespace SoloLearning.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("EnName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -211,10 +208,6 @@ namespace SoloLearning.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -223,9 +216,6 @@ namespace SoloLearning.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");

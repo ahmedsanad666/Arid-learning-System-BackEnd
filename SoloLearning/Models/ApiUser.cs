@@ -7,14 +7,13 @@ namespace SoloLearning.Models
     public class ApiUser : IdentityUser
     {
     
-        public string FirstName { get; set; }
+        public string ArName { get; set; }
+        public string EnName { get; set; }
 
-        public string LastName { get; set; }
-
-        [Required]
+        [NotMapped]
         public string Password { get; set; }
       
-        public string Role { get; set; }
+        //public string Role { get; set; }
 
 
 
